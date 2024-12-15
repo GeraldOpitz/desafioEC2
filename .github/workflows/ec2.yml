@@ -53,13 +53,9 @@ jobs:
             terminate-on-post: false
             
         - name: Describe instance to get ID
-          id: get-instance-id
           run: |
-            INSTANCE_ID=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=Desafio2" \
-              --query "Reservations[*].Instances[*].InstanceId" \
-              --output text)
-            echo "Instance ID: $INSTANCE_ID"
+            INSTANCE_ID="${{ steps.ec2-Amazon-Linux-2-AMI.outputs.instance_id }}"\
+            echo "Instance ID is $INSTANCE_ID"
             echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
             
         - name: Create AMI
