@@ -22,7 +22,7 @@ jobs:
         - name: Create security group
           id: create-sg
           run: |
-            aws ec2 create-security-group --group-name "challenge-security-group" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9"      > sg.json
+            aws ec2 create-security-group --group-name "challenge-security-group1" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9"      > sg.json
             GROUP_ID=$(jq -r '.GroupId' sg.json)
             echo "Security Group ID: $GROUP_ID"
             echo "GROUP_ID=$GROUP_ID" >> $GITHUB_ENV
@@ -42,7 +42,7 @@ jobs:
           id: ec2-Amazon-Linux-2-AMI
           uses: truemark/aws-ec2-run-instance-action@v5
           with:
-            name: "ChallengeEC2"
+            name: "ChallengeEC2-1"
             security-group-id: "${{ env.GROUP_ID }}"
             subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
@@ -56,12 +56,14 @@ jobs:
           id: get-instance-id
           run: |
             INSTANCE_ID=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=ChallengeEC2" \
+              --filters "Name=tag:Name,Values=ChallengeEC2-1" \
               --query "Reservations[*].Instances[*].InstanceId" \
               --output text)
             echo "Instance ID: $INSTANCE_ID"
             echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
+        - name: Wait for instance to be ready
+          run: sleep 10
             
         - name: Create AMI
           run: aws ec2 create-image --instance-id ${{ env.INSTANCE_ID }} --name challenge_AMI --reboot
