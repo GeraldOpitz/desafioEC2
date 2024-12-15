@@ -31,11 +31,13 @@ jobs:
           with:
             name: "Desafio2"
             security-group-id: sg-preview-1
+            subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
             instance-type: "t2.micro"
+            instance-profile: "Gopitz"
             region: "us-east-1"
             key-name: challenge-key
-            subnet-id: subnet-0f88db966ff5d3cd5
+            
             
         - name: Create AMI
           run: aws ec2 create-image --instance-id ec2-Amazon Linux 2 AMI --name challenge_AMI --reboot
