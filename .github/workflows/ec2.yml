@@ -42,7 +42,7 @@ jobs:
           id: ec2-Amazon-Linux-2-AMI
           uses: truemark/aws-ec2-run-instance-action@v5
           with:
-            name: "Desafio2"
+            name: "ChallengeEC2"
             security-group-id: "${{ env.GROUP_ID }}"
             subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
@@ -56,7 +56,7 @@ jobs:
           id: get-instance-id
           run: |
             INSTANCE_ID=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=Desafio2" \
+              --filters "Name=tag:Name,Values=ChallengeEC2" \
               --query "Reservations[*].Instances[*].InstanceId" \
               --output text)
             echo "Instance ID: $INSTANCE_ID"
