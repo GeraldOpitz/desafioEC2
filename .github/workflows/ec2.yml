@@ -34,7 +34,7 @@ jobs:
             subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
             instance-type: "t2.micro"
-            instance-profile: "gopitz"
+            instance-profile: "Challenge-Role"
             region: "us-east-1"
             key-name: challenge-key
             
