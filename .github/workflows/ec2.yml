@@ -20,7 +20,9 @@ jobs:
             aws-region: us-east-1
 
         - name: Create security group
-          run: aws ec2 create-security-group --group-name "challenge2-security-group" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9" 
+          run: |
+            aws ec2 create-security-group --group-name "challenge2-security-group" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9" > sg.json
+            jq -r '.GroupId' sg.json > sg-id.txt
 
         - name: Create SSH key
           run: aws ec2 create-key-pair --key-name challenge-key --key-type rsa --key-format pem 
@@ -30,7 +32,7 @@ jobs:
           uses: truemark/aws-ec2-run-instance-action@v5
           with:
             name: "Desafio2"
-            security-group-id: "challenge2-security-group"
+            security-group-id: "$(cat sg-id.txt)"
             subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
             instance-type: "t2.micro"
