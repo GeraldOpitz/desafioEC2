@@ -50,6 +50,7 @@ jobs:
             instance-profile: "Challenge-Role"
             region: "us-east-1"
             key-name: challenge-key
+            terminate-on-post: false
             
         - name: Describe instance to get ID
           id: get-instance-id
