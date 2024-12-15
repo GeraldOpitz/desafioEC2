@@ -29,7 +29,7 @@ jobs:
           run: aws ec2 create-key-pair --key-name challenge-key --key-type rsa --key-format pem 
 
         - name: Setup EC2_challenge
-          id: ec2-Amazon Linux 2 AMI
+          id: ec2-Amazon-Linux-2-AMI
           uses: truemark/aws-ec2-run-instance-action@v5
           with:
             name: "Desafio2"
