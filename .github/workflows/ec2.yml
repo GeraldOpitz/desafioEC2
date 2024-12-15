@@ -20,14 +20,17 @@ jobs:
             aws-region: us-east-1
 
         - name: Create security group
-          run: aws ec2 create-security-group --group-name "challenge2-security-group" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9"  --group-id "sg-preview-1"
-
-        - name: Wait for Security Group to be ready
+          id: create-sg
           run: |
-            until aws ec2 describe-security-groups --group-names "challenge2-security-group"; do
-              echo "Waiting for Security Group to be ready..."
-              sleep 5
-            done
+            aws ec2 create-security-group --group-name "challenge2-security-group" --description "challenge-description" --vpc-id "vpc-0f0053a2d8f4a88c9" > sg.json
+            GROUP_ID=$(jq -r '.GroupId' sg.json)
+            echo "Security Group ID: $GROUP_ID"
+            echo "GROUP_ID=$GROUP_ID" >> $GITHUB_ENV
+
+        - name: Show Security Group ID
+          run: echo "Security Group ID is $GROUP_ID"
+          env:
+            GROUP_ID: ${{ env.GROUP_ID }}
 
         - name: Create SSH key
           run: aws ec2 create-key-pair --key-name challenge-key --key-type rsa --key-format pem 
@@ -37,7 +40,7 @@ jobs:
           uses: truemark/aws-ec2-run-instance-action@v5
           with:
             name: "Desafio2"
-            security-group-id: "sg-preview-1"
+            security-group-id: "${{ env.GROUP_ID }}"
             subnet-id: subnet-0f88db966ff5d3cd5
             image-id: ami-0166fe664262f664c
             instance-type: "t2.micro"
