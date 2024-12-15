@@ -1,0 +1,48 @@
+name: EC2
+
+on:
+    push:
+        branches:
+            - main
+jobs:
+    build-and-push:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+     
+        - name: Configure AWS credentials 
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+            aws-region: us-east-1
+
+        - name: Create security group
+          run: aws ec2 create-security-group --group-name "challenge2-security-group" --description "launch-wizard-1 created 2024-12-15T05:50:53.160Z" --vpc-id "vpc-0f0053a2d8f4a88c9" 
+
+        - name: Security group access
+          run: aws ec2 authorize-security-group-ingress --group-id "sg-preview-1" --ip-permissions '{"IpProtocol":"tcp","FromPort":22,"ToPort":22,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]}' 
+
+        - name: Create SSH key
+          run: aws ec2 create-key-pair --key-name challenge-key --key-type rsa --key-format pem 
+
+        - name: Setup EC2_challenge
+          id: ec2-Amazon Linux 2 AMI
+          uses: truemark/aws-ec2-run-instance-action@v5
+          with:
+            name: "Desafio2"
+            security-group-id: sg-preview-1
+            image-id: ami-0166fe664262f664c
+            instance-type: "t2.micro"
+            region: "us-east-1"
+            key-name: challenge-key
+            network-interfaces: '{"SubnetId":"subnet-0f88db966ff5d3cd5","AssociatePublicIpAddress":true,"DeviceIndex":0,"Groups":["sg-preview-1"]}'
+            
+
+        - name: Create AMI
+          run: aws ec2 create-image --instance-id ec2-Amazon Linux 2 AMI --name challenge_AMI --reboot
+
+
+          
