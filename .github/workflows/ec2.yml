@@ -33,11 +33,7 @@ jobs:
             GROUP_ID: ${{ env.GROUP_ID }}
 
         - name: Security group rules
-          run: aws ec2 authorize-security-group-ingress \
-            --group-id "${{ env.GROUP_ID }}" \
-            --protocol tcp \
-            --port 22 \
-            --cidr "${{ secrets.AWS_SECRET_ACCESS_KEY }}/32" 
+          run: aws ec2 authorize-security-group-ingress group-id "${{ env.GROUP_ID }}" --protocol tcp --port 22 --cidr "${{ secrets.AWS_SECRET_ACCESS_KEY }}/32" 
 
         - name: Create SSH key
           run: aws ec2 create-key-pair --key-name challenge-key --key-type rsa --key-format pem 
